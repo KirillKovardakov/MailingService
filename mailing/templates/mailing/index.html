@@ -1,0 +1,58 @@
+{% extends 'mailling/base.html' %}
+{% block title %}Skystore{% endblock %}
+
+{% block content %}
+{% include 'mailling/header.html' %}
+
+<div class="container my-4">
+    <form method="get" class="mb-4">
+        <div class="row align-items-center">
+            <div class="col-md-4">
+                <select name="category" class="form-select" onchange="this.form.submit()">
+                    <option value="">Все категории</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category.id|stringformat:
+                    "s" == selected_category %}
+                    selected{% endif %}>
+                    {{ category.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary">Фильтровать</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row text-center">
+    <a href="{% url 'catalog:product_create' %}" class="btn btn-primary mb-3">Создать новый продукт</a>
+
+    {% for product in products %}
+    <div class="col-3">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">{{ product.name }}</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title pricing-card-title">{{ product.price }} Руб</h1>
+                <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                    <li>- {{ product.description|truncatechars:100 }}</li>
+                    <li>- {{ product.category }}</li>
+                    <a href="{% url 'catalog:product_detail' product.pk %}" class="btn btn-sm btn-secondary ml-3">Посмотреть</a>
+                    {% if "library.can_delete_product" in perms or user == product.owner %}
+                    <a href="{% url 'catalog:product_update' product.pk %}" class="btn btn-sm btn-secondary ml-3">Редактировать</a>
+                    <a href="{% url 'catalog:product_delete' product.pk %}"
+                       class="btn btn-sm btn-danger ml-1">Удалить</a>
+                    {% endif %}
+                </ul>
+                <button type="button" class="btn btn-lg btn-block btn-outline-primary">Купить</button>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>Нет продуктов для отображения.</p>
+    {% endfor %}
+</div>
+{% endblock %}

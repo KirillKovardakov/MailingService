@@ -1,0 +1,49 @@
+{% extends 'mailing/base.html' %}
+{% block title %}Список рассылок{% endblock %}
+
+{% block content %}
+<h2>Список рассылок</h2>
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Сообщение</th>
+        <th>Дата начала</th>
+        <th>Дата окончания</th>
+        <th>Статус</th>
+        <th>Действия</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for mailing in mailings %}
+    <tr>
+        <td>{{ mailing.id }}</td>
+        <td>{{ mailing.message.subject }}</td>
+        <td>{{ mailing.start_datetime }}</td>
+        <td>{{ mailing.end_datetime }}</td>
+        <td>{{ mailing.get_status_display }}</td>
+        <td>
+            {% if user.profile.role == 'manager' %}
+            {% if mailing.status != 'Завершена' %}
+            <a href="{% url 'users:disable_mailing' mailing.id %}" class="btn btn-danger btn-sm">
+                Отключить
+            </a>
+            {% else %}
+            <span class="text-muted">Завершена</span>
+            {% endif %}
+            {% else %}
+            {% if mailing.status == 'Создана' %}
+            <a href="{% url 'mailing:mailing_update' mailing.id %}" class="btn btn-primary btn-sm">Редактировать</a>
+            {% endif %}
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="6">Нет рассылок.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
