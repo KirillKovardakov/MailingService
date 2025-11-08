@@ -1,0 +1,32 @@
+<!-- templates/mailing/attempts_list.html -->
+{% extends 'mailing/base.html' %}
+{% block title %}Попытки рассылки{% endblock %}
+
+
+{% block content %}
+<h2>Попытки — рассылка #{{ mailing.id }}</h2>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th>Время</th>
+        <th>Получатель</th>
+        <th>Статус</th>
+        <th>Ответ сервера</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for a in attempts %}
+    <tr>
+        <td>{{ a.attempted_at }}</td>
+        <td>{{ a.recipient.email }}</td>
+        <td>{{ a.get_status_display }}</td>
+        <td>{{ a.server_response|default:"-" }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="4">Попыток нет</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
